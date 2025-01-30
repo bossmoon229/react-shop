@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Items from "./components/Items";
 import Categories from "./components/Categories";
+import ShowFullItem from "./components/ShowFullItem";
 
 class App extends React.Component {
   constructor(props) {
@@ -44,33 +45,54 @@ class App extends React.Component {
           price: "39.99",
         },
       ],
+      showFullItem: false,
+      fullItem: {},
     };
     this.state.currentItems = this.state.items;
     this.addToOrder = this.addToOrder.bind(this);
     this.deleteOrder = this.deleteOrder.bind(this);
     this.chooseCategorie = this.chooseCategorie.bind(this);
+    this.onShowItem = this.onShowItem.bind(this);
   }
 
   render() {
     return (
       <div className="wrapper">
         <Header orders={this.state.orders} onDelete={this.deleteOrder} />
-        <Categories chooseCategorie={this.chooseCategorie}/>
-        <Items items={this.state.currentItems} onAdd={this.addToOrder} />
+        <Categories chooseCategorie={this.chooseCategorie} />
+        <Items
+          onShowItem={this.onShowItem}
+          items={this.state.currentItems}
+          onAdd={this.addToOrder}
+        />
+
+        {this.state.showFullItem && (
+          <ShowFullItem
+            onAdd={this.addToOrder}
+            item={this.state.fullItem}
+            onShowItem={this.onShowItem}
+          />
+        )}
         <Footer />
       </div>
     );
   }
 
-  chooseCategorie(categorie){
+  onShowItem(item) {
+    this.setState({ fullItem: item });
+    this.setState({ showFullItem: !this.state.showFullItem });
+  }
 
-    if(categorie === 'all'){
-      this.setState({currentItems: this.state.items})
-      return
+  chooseCategorie(categorie) {
+    if (categorie === "all") {
+      this.setState({ currentItems: this.state.items });
+      return;
     }
     this.setState({
-      currentItems: this.state.items.filter(elem => elem.categorie === categorie)
-    })
+      currentItems: this.state.items.filter(
+        (elem) => elem.categorie === categorie
+      ),
+    });
   }
 
   deleteOrder(id) {
